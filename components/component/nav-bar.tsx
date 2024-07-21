@@ -2,11 +2,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FiActivity } from "react-icons/fi";
 import Image from "next/image";
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers'
+
 
 export function NavBar() {
+  const cookieStore = cookies()
+  const jwt_token = cookieStore.get('jwt_token')
+
+
   return (
     <div className="flex justify-center">
-      <header className="fixed top-0 z-50 bg-[#004d40] shadow-sm rounded-full w-2/3 mt-10">
+      <header className="fixed top-0 z-50 bg-secondary shadow-sm rounded-full w-2/3 mt-10">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center">
             <MountainIcon className="h-6 w-6" />
@@ -23,9 +30,24 @@ export function NavBar() {
               Contact
             </Link>
           </nav>
-          <Button className="bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
-            Get Started
-          </Button>
+          <div className="flex items-center justify-center h-screen">
+            {
+              !jwt_token &&   <Link 
+              href="/auth/register"
+              className="text-sm bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 p-4 glow-effect">
+              Register today
+            </Link> 
+            }
+            {
+              jwt_token && 
+              <Link 
+              href="/account"
+              className="text-sm bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 p-4 glow-effect">
+              Dasboard
+            </Link> 
+            }
+          
+          </div>
         </div>
       </header>
     </div>
