@@ -11,7 +11,7 @@ CREATE TABLE "User" (
     "profile_views" INTEGER NOT NULL,
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "alias" TEXT NOT NULL,
+    "alias" TEXT,
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -20,7 +20,7 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Customize" (
-    "id" TEXT NOT NULL,
+    "customize_id" TEXT NOT NULL,
     "background" TEXT NOT NULL,
     "custom_cursor" TEXT NOT NULL,
     "profile_avatar" TEXT NOT NULL,
@@ -35,34 +35,34 @@ CREATE TABLE "Customize" (
     "username_glow" BOOLEAN NOT NULL DEFAULT true,
     "badge_glow" BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT "Customize_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Customize_pkey" PRIMARY KEY ("customize_id")
 );
 
 -- CreateTable
 CREATE TABLE "Color_Customization" (
-    "id" TEXT NOT NULL,
+    "color_customization_id" TEXT NOT NULL,
     "accent_color" TEXT NOT NULL DEFAULT '1b1b1b',
     "background_color" TEXT NOT NULL DEFAULT '080808',
     "text_color" TEXT NOT NULL DEFAULT 'FFFFFF',
     "icon_color" TEXT NOT NULL DEFAULT 'FFFFFF',
 
-    CONSTRAINT "Color_Customization_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Color_Customization_pkey" PRIMARY KEY ("color_customization_id")
 );
 
 -- CreateTable
 CREATE TABLE "Other_Customization" (
-    "id" TEXT NOT NULL,
+    "other_customization_id" TEXT NOT NULL,
     "monochrome_icons" BOOLEAN NOT NULL DEFAULT true,
     "animated_title" BOOLEAN NOT NULL DEFAULT false,
     "volume_control" BOOLEAN NOT NULL DEFAULT false,
     "use_discord_avatar" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "Other_Customization_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Other_Customization_pkey" PRIMARY KEY ("other_customization_id")
 );
 
 -- CreateTable
 CREATE TABLE "Profiles" (
-    "id" TEXT NOT NULL,
+    "profiles_id" TEXT NOT NULL,
     "snapchat" TEXT NOT NULL,
     "youtube" TEXT NOT NULL,
     "discord" TEXT NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE "Profiles" (
     "monero" TEXT NOT NULL,
     "email" TEXT NOT NULL,
 
-    CONSTRAINT "Profiles_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Profiles_pkey" PRIMARY KEY ("profiles_id")
 );
 
 -- CreateTable
@@ -114,4 +114,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- AddForeignKey
-ALTER TABLE "Custom_Url" ADD CONSTRAINT "Custom_Url_custom_url_id_fkey" FOREIGN KEY ("custom_url_id") REFERENCES "Profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Customize" ADD CONSTRAINT "Customize_customize_id_fkey" FOREIGN KEY ("customize_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Color_Customization" ADD CONSTRAINT "Color_Customization_color_customization_id_fkey" FOREIGN KEY ("color_customization_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Other_Customization" ADD CONSTRAINT "Other_Customization_other_customization_id_fkey" FOREIGN KEY ("other_customization_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Profiles" ADD CONSTRAINT "Profiles_profiles_id_fkey" FOREIGN KEY ("profiles_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Custom_Url" ADD CONSTRAINT "Custom_Url_custom_url_id_fkey" FOREIGN KEY ("custom_url_id") REFERENCES "Profiles"("profiles_id") ON DELETE RESTRICT ON UPDATE CASCADE;

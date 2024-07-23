@@ -13,7 +13,7 @@ model User {
   profile_views Int
   email     String   @unique
   username  String   @unique
-  alias     String
+  alias     String?
   password  String
   createdAt DateTime @default(now())
   customization Customize[]

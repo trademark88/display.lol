@@ -14,7 +14,9 @@ export default function LogoutButton() {
         credentials: 'same-origin'
       });
       if(response.status){
+
         router.push("/")
+        router.refresh()
       }
     } catch (error) {
       console.error('Logout failed:', error);

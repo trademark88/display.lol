@@ -1,27 +1,44 @@
+"use client"
+import React, { useState, useEffect } from 'react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { cookies } from "next/headers"; 
 import LogoutButton from "./LogoutButton";
 
-export async function Sidenav() {
-  const cookie = cookies();
-  const token = cookie.get("token")?.value;
+interface SidenavProps {
+  token: string | null;
+}
 
-  let usernamerender: string | undefined;
-  let emailrender: string | undefined;
+const Sidenav: React.FC<SidenavProps> = ({ token }) => {
+  const [user, setUser] = useState<{ username: string; email: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  if (token) {
-    const response = await fetch(`http://localhost:3000/api/getuser/name?token=${token}`, {
-      method: 'GET'
-    });
-    const { username, email } = await response.json();
-    usernamerender = username;
-    emailrender = email;
-  } else {
-    console.error("Token is not available");
-  }
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (token) {
+        try {
+          const response = await fetch(`http://localhost:3000/api/getuser/name?token=${token}`, {
+            method: 'GET'
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const { username, email } = await response.json();
+          setUser({ username, email });
+        } catch (error) {
+          console.error('Fetch error:', error);
+          setError('Error fetching user data.');
+        }
+      } else {
+        console.error("Token is not available");
+        setError('User is not authenticated.');
+      }
+    };
+
+    fetchUser();
+  }, [token]);
 
   return (
     <div className="flex h-screen w-full flex-col bg-background">
@@ -96,16 +113,19 @@ export async function Sidenav() {
           </Avatar>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <div className="text-sm font-medium">{usernamerender}</div>
+              <div className="text-sm font-medium">{user?.username}</div>
               <LogoutButton />
             </div>
-            <div className="text-xs text-muted-foreground">{emailrender}</div>
+            <div className="text-xs text-muted-foreground">{user?.email}</div>
+            {error && <div className="text-xs text-red-500">{error}</div>}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default Sidenav;
 
 function ChevronRightIcon(props: any) {
   return (
@@ -123,9 +143,8 @@ function ChevronRightIcon(props: any) {
     >
       <path d="m9 18 6-6-6-6" />
     </svg>
-  )
+  );
 }
-
 
 function CrownIcon(props: any) {
   return (
@@ -144,9 +163,8 @@ function CrownIcon(props: any) {
       <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" />
       <path d="M5 21h14" />
     </svg>
-  )
+  );
 }
-
 
 function ImageIcon(props: any) {
   return (
@@ -166,9 +184,8 @@ function ImageIcon(props: any) {
       <circle cx="9" cy="9" r="2" />
       <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
     </svg>
-  )
+  );
 }
-
 
 function LinkIcon(props: any) {
   return (
@@ -184,15 +201,10 @@ function LinkIcon(props: any) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      <path d="M9 11V9a5 5 0 0 1 8.66-3.54M15 13v2a5 5 0 0 1-8.66 3.54M8 12h8" />
     </svg>
-  )
+  );
 }
-
-
-
-
 
 function ReplaceIcon(props: any) {
   return (
@@ -208,17 +220,13 @@ function ReplaceIcon(props: any) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M14 4c0-1.1.9-2 2-2" />
-      <path d="M20 2c1.1 0 2 .9 2 2" />
-      <path d="M22 8c0 1.1-.9 2-2 2" />
-      <path d="M16 10c-1.1 0-2-.9-2-2" />
-      <path d="m3 7 3 3 3-3" />
-      <path d="M6 10V5c0-1.7 1.3-3 3-3h1" />
-      <rect width="8" height="8" x="2" y="14" rx="2" />
+      <path d="m3 7 3-3 3 3" />
+      <path d="M6 20V4" />
+      <path d="m21 17-3 3-3-3" />
+      <path d="M18 4v16" />
     </svg>
-  )
+  );
 }
-
 
 function SettingsIcon(props: any) {
   return (
@@ -234,12 +242,11 @@ function SettingsIcon(props: any) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
       <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
-  )
+  );
 }
-
 
 function UserIcon(props: any) {
   return (
@@ -255,12 +262,11 @@ function UserIcon(props: any) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
     </svg>
-  )
+  );
 }
-
 
 function ViewIcon(props: any) {
   return (
@@ -276,31 +282,8 @@ function ViewIcon(props: any) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M5 12s2.545-5 7-5c4.454 0 7 5 7 5s-2.546 5-7 5c-4.455 0-7-5-7-5z" />
-      <path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-      <path d="M21 17v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2" />
-      <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2" />
+      <path d="M5 12h14" />
+      <path d="M12 5l7 7-7 7" />
     </svg>
-  )
-}
-
-
-function XIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  )
+  );
 }
