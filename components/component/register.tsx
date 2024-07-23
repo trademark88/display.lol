@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
 
 export function Register() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const router = useRouter()
 
   const handleRegister = async (e: any) => {
     e.preventDefault();
@@ -31,10 +33,8 @@ export function Register() {
     });
 
     if (response.ok) {
-      // Handle successful registration
-      console.log('Registration successful');
+      router.push("/account")
     } else {
-      // Handle registration error
       console.error('Registration failed');
     }
   };

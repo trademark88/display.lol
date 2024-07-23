@@ -3,13 +3,11 @@ import { Button } from "@/components/ui/button";
 import { FiActivity } from "react-icons/fi";
 import Image from "next/image";
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers'
-
+import { cookies } from 'next/headers';
 
 export function NavBar() {
-  const cookieStore = cookies()
-  const jwt_token = cookieStore.get('jwt_token')
-
+  const cookieStore = cookies();
+  const token = cookieStore.get('token');
 
   return (
     <div className="flex justify-center">
@@ -32,21 +30,21 @@ export function NavBar() {
           </nav>
           <div className="flex items-center justify-center h-screen">
             {
-              !jwt_token &&   <Link 
-              href="/auth/register"
-              className="text-sm bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 p-4 glow-effect">
-              Register today
-            </Link> 
+              !token && 
+              <Link 
+                href="/auth/register"
+                className="text-sm bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 p-4 glow-effect">
+                Register today
+              </Link>
             }
             {
-              jwt_token && 
+              token && 
               <Link 
-              href="/account"
-              className="text-sm bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 p-4 glow-effect">
-              Dasboard
-            </Link> 
+                href="/account"
+                className="text-sm bg-primary rounded-full text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 p-4 glow-effect">
+                Dashboard
+              </Link>
             }
-          
           </div>
         </div>
       </header>
@@ -65,20 +63,23 @@ function MountainIcon(props: any) {
 
 function XIcon(props: any) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
+    <div className="flex items-center">
+      <svg
+        {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+      <span className="ml-2">Close</span>
+    </div>
   );
 }

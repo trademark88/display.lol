@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,9 +8,122 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
+  uid       Int @default(autoincrement())
+  profile_views Int
   email     String   @unique
   username  String   @unique
+  alias     String
   password  String
   createdAt DateTime @default(now())
+  customization Customize[]
+  color_customization Color_Customization[]
+  other_customization Other_Customization[]
+  profiles Profiles[]
 }
+
+//customize
+
+model Customize{
+  customize_id String @id @default(uuid())
+  user User @relation(fields: [customize_id], references: [id])
+  background String
+  custom_cursor String
+  profile_avatar String
+  audio String
+  description String
+  background_effects background_effects
+  username_effects username_effects
+  profile_opacity Int
+  profile_blur Int
+  swap_box_colors Boolean @default(false)
+  social_glow Boolean @default(true)
+  username_glow Boolean @default(true)
+  badge_glow Boolean @default(true)
+}
+
+model Color_Customization{
+  color_customization_id String @id @default(uuid())
+  user User @relation(fields: [color_customization_id],references: [id])
+  accent_color String @default("1b1b1b")
+  background_color String @default("080808")
+  text_color String @default("FFFFFF")
+  icon_color String @default("FFFFFF")
+}
+
+model Other_Customization{
+  other_customization_id String @id @default(uuid())
+  user User @relation(fields: [other_customization_id], references: [id])
+  monochrome_icons Boolean @default(true)
+  animated_title Boolean @default(false)
+  volume_control Boolean @default(false)
+  use_discord_avatar Boolean @default(false)
+}
+
+enum background_effects{
+  none
+  snowflakes
+  rain
+  blurred_background
+  night_time
+  old_tv
+}
+
+enum username_effects{
+ rainbow_name
+  black_sparkles
+  blue_sparkles
+  green_sparkles
+  pink_sparkles
+  red_sparkles
+  white_sparkles
+  yellow_sparkles
+}
+
+// links
+
+model Profiles{
+    profiles_id String @id @default(uuid())
+    user User @relation(fields: [profiles_id], references: [id])
+    snapchat String 
+    youtube String
+    discord String
+    spotify String
+    instagram String
+    x String
+    tiktok String
+    telegram String
+    soundcloud String
+    paypal String
+    github String
+    roblox String
+    cash_app String
+    gitlab String
+    twitch String
+    reddit String
+    namemc String
+    onlyfans String
+    linkedin String
+    steam String
+    kick String
+    pinterest String
+    lastfm String
+    buymeacoffee String
+    kofi String
+    facebook String
+    bitcoin String
+    ethereum String
+    litecoin String
+    monero String
+    email String
+    custom_social Custom_Url[]
+}
+
+model Custom_Url{
+  custom_url_id String @id @default(uuid())
+  social_icon String
+  website String
+  profile Profiles @relation(fields: [custom_url_id], references: [profiles_id])
+}
+
+

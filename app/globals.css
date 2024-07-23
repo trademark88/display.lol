@@ -65,3 +65,12 @@
 .glow-effect:hover::after {
   opacity: 1;
 }
+
+/* In deiner globalen CSS-Datei */
+body.menu-open .collapsible-menu {
+  display: block;
+}
+
+.collapsible-menu {
+  display: none;
+}

@@ -35,21 +35,21 @@ export async function POST(req: Request) {
       },
     });
 
-    const jwt_token = await encrypt(newUser);
+    const token = await encrypt(newUser);
 
-  if (!jwt_token) {
+  if (!token) {
     return new Response('Failed to encrypt data', { status: 500 });
   }
 
   const cookieStore = cookies();
   cookieStore.set({
-    name: 'jwt_token',
-    value: jwt_token,
+    name: 'token',
+    value: token,
     httpOnly: true,
     path: '/',
   });
   
-    return new Response(JSON.stringify(jwt_token), { status: 201 });
+    return new Response(JSON.stringify(token), { status: 201 });
   } catch (error) {
     console.error('Error creating user:', error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });

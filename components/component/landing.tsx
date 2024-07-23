@@ -26,9 +26,12 @@ To read more about using these font, please visit the Next.js documentation:
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { NavBar } from "./nav-bar"
 
 export function Landing() {
   return (
+    <>
+    <NavBar/>
     <div className="flex flex-col min-h-[100dvh]">
      
       <main className="flex-1 ml-16">
@@ -216,6 +219,7 @@ Are we safe?              </h2>
         </nav>
       </footer>
     </div>
+    </>
   )
 }
 
