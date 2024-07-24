@@ -30,10 +30,28 @@ export async function POST(req: Request) {
         username,
         password: hashedPassword,
         profile_views: 0,
+        customization: {
+          create: {
+            background: "", 
+            custom_cursor: "default_cursor.png",
+            profile_avatar: "default_avatar.png",
+            audio: "",
+            description: "",
+            background_effects: "none",
+            username_effects: "rainbow_name",
+            profile_opacity: 100,
+            profile_blur: 0,
+            swap_box_colors: false,
+            social_glow: true,
+            username_glow: true,
+            badge_glow: true
+          }
+        }
       },
+
     });
 
-    const token = await encrypt(newUser);
+    const token = await encrypt(newUser.id);
 
     if (!token) {
       return new Response('Failed to encrypt data', { status: 500 });

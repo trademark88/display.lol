@@ -13,19 +13,23 @@ export async function GET(req: Request) {
         }
 
         const user = await prisma.user.findUnique({
-            where: {
-                username: username
-            }
+            where: { username: username },
+            include: { customization: true }
         });
 
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
+
+        const customization = user.customization.length > 0 ? user.customization[0] : null;
+
         return NextResponse.json({
             username_body: user.username,
-            profile_views: user.profile_views
+            profile_views: user.profile_views,
+            background: customization ? customization.background : null
         });
     } catch (error) {
+        console.error('Error fetching user data:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

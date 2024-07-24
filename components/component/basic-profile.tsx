@@ -2,6 +2,21 @@ import React from 'react';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+// Animierte Border Keyframes
+const borderAnimation = `
+@keyframes borderAnimation {
+  0% {
+    border-color: rgba(255, 255, 255, 0);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 0);
+  }
+}
+`;
+
 function EyeIcon(props: any) {
   return (
     <svg
@@ -42,14 +57,13 @@ function XIcon(props: any) {
   );
 }
 
-interface BasicProfileProps {
-    username: string;
-    profile_views: number;
-    error: boolean | string;
-    userData: boolean;
-}
-
-export function BasicProfile({ username, profile_views, error, userData }: BasicProfileProps) {
+export function BasicProfile({
+    username,
+    profile_views,
+    error,
+    userData,
+    background // neuer Prop für den Hintergrund
+}: any) {
     if (error) {
         return (
             <Card className="w-full max-w-md mx-auto bg-primary text-primary-foreground rounded-2xl overflow-hidden">
@@ -71,22 +85,39 @@ export function BasicProfile({ username, profile_views, error, userData }: Basic
     }
 
     return (
-        <Card className="w-full max-w-md mx-auto bg-primary text-primary-foreground  overflow-hidden rounded-2xl">
-            <CardHeader className="bg-primary-foreground/10 py-6">
-                <div className="flex flex-col items-center justify-center">
-                    <Avatar className="w-16 h-16 mb-4 rounded-full">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>{username[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="text-2xl font-bold">{username}</div>
-                </div>
-            </CardHeader>
-            <CardContent className="px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <EyeIcon className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{profile_views.toString()}</span>
-                </div>
-            </CardContent>
-        </Card>
+        <div className="relative w-full max-w-md mx-auto">
+            {background && (
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(/uploads/${background})` }}
+                />
+            )}
+            <style>
+                {borderAnimation}
+            </style>
+            <Card
+                className="relative z-10 bg-primary text-primary-foreground overflow-hidden rounded-2xl"
+                style={{
+                    border: '2px solid rgba(255, 255, 255, 0)',
+                    animation: 'borderAnimation 3s infinite' // Animation anwenden
+                }}
+            >
+                <CardHeader className="bg-primary-foreground/10 py-6">
+                    <div className="flex flex-col items-center justify-center">
+                        <Avatar className="w-16 h-16 mb-4 rounded-full">
+                            <AvatarImage src="/placeholder-user.jpg" />
+                            <AvatarFallback>{username[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="text-2xl font-bold">{username}</div>
+                    </div>
+                </CardHeader>
+                <CardContent className="px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <EyeIcon className="w-5 h-5 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">{profile_views.toString()}</span>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

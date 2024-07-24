@@ -45,6 +45,7 @@ export default async function Page() {
         profile_views={data.profile_views} 
         alias={data.alias} 
       />
+      
     </>
   );
 }

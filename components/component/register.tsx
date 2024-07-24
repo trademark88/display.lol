@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,12 +8,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 
-export function Register() {
+export function Register( {usernameparam}: any) {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const router = useRouter()
+
+  useEffect(() => {
+    if (usernameparam) {
+      setUsername(usernameparam);
+    }
+  }, [usernameparam]);
 
   const handleRegister = async (e: any) => {
     e.preventDefault();

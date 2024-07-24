@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: 'Invalid email or password' }), { status: 401 });
     }
 
-    const token = await encrypt(user);
+    const token = await encrypt(user.id);
 
     if (!token) {
       return new Response('Failed to encrypt data', { status: 500 });

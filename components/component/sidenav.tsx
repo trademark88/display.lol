@@ -55,7 +55,7 @@ const Sidenav: React.FC<SidenavProps> = ({ token }) => {
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-2 px-3">
                 <Link
-                  href="#"
+                  href="/account"
                   className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   prefetch={false}
                 >
@@ -73,7 +73,7 @@ const Sidenav: React.FC<SidenavProps> = ({ token }) => {
               </CollapsibleContent>
             </Collapsible>
             <Link
-              href="#"
+              href="/account/customize"
               className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               prefetch={false}
             >

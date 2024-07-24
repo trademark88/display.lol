@@ -1,18 +1,36 @@
 import { decrypt } from '@/lib/jwt';
 import { User } from '@/types/types';
+import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
+
+const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const token = url.searchParams.get('token') as string;
+    const token = url.searchParams.get('token');
 
-    const decrypted_token = await decrypt<User>(token);
+    if (!token) {
+      return NextResponse.json({ "error": "Token not provided" }, { status: 400 });
+    }
 
-    if (decrypted_token.alias) {
-      return NextResponse.json({ "alias": decrypted_token.alias});
+    const decrypted_token: string | null = await decrypt<string>(token);
+    if (decrypted_token) {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: decrypted_token
+        }
+      });
+
+      if (user && user.alias) {
+        return NextResponse.json({ "alias": user.alias });
+      } else if (user) {
+        return NextResponse.json({ "alias": "No Alias set" }, { status: 400 });
+      } else {
+        return NextResponse.json({ "error": "User not found" }, { status: 404 });
+      }
     } else {
-      return NextResponse.json({ "alias": "No Alias set" }, { status: 400 });
+      return NextResponse.json({ "error": "Invalid token" }, { status: 400 });
     }
   } catch (e) {
     console.error("Error handling request:", e);

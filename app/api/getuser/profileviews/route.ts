@@ -1,16 +1,33 @@
 import { decrypt } from '@/lib/jwt';
 import { User } from '@/types/types';
+import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
+
+const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const token = url.searchParams.get('token') as string;
+    const token = url.searchParams.get('token');
 
-    const decrypted_token = await decrypt<User>(token);
+    if (!token) {
+      return NextResponse.json({ "error": "Token not provided" }, { status: 400 });
+    }
 
+    const decrypted_token: string | null = await decrypt<string>(token);
+    
     if (decrypted_token) {
-      return NextResponse.json({ "profile_views": decrypted_token.profile_views});
+      const user = await prisma.user.findUnique({
+        where: {
+          id: decrypted_token
+        }
+      });
+
+      if (user) {
+        return NextResponse.json({ "profile_views": user.profile_views });
+      } else {
+        return NextResponse.json({ "error": "User not found" }, { status: 404 });
+      }
     } else {
       return NextResponse.json({ "error": "Invalid or expired token" }, { status: 400 });
     }
