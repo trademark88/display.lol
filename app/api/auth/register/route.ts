@@ -32,11 +32,6 @@ export async function POST(req: Request) {
         profile_views: 0,
         customization: {
           create: {
-            background: "", 
-            custom_cursor: "default_cursor.png",
-            profile_avatar: "default_avatar.png",
-            audio: "",
-            description: "",
             background_effects: "none",
             username_effects: "rainbow_name",
             profile_opacity: 100,

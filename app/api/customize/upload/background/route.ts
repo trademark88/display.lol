@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         const uuidFileName = `${uuidv4()}.${fileExtension}`;
 
         // Datei speichern
-        await fs.writeFile(`./public/uploads/${uuidFileName}`, buffer);
+        await fs.writeFile(`./public/uploads/background/${uuidFileName}`, buffer);
 
         // 3. Finde den Customize-Eintrag des Benutzers
         const customize = await prisma.customize.findFirst({

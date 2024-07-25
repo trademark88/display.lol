@@ -27,13 +27,13 @@ model User {
 model Customize{
   customize_id String @id @default(uuid())
   user User @relation(fields: [customize_id], references: [id])
-  background String 
-  custom_cursor String
-  profile_avatar String
-  audio String
-  description String
-  background_effects background_effects
-  username_effects username_effects
+  background String?
+  custom_cursor String?
+  profile_avatar String?
+  audio String?
+  description String?
+  background_effects background_effects?
+  username_effects username_effects?
   profile_opacity Int
   profile_blur Int
   swap_box_colors Boolean @default(false)

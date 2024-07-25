@@ -26,7 +26,9 @@ export async function GET(req: Request) {
         return NextResponse.json({
             username_body: user.username,
             profile_views: user.profile_views,
-            background: customization ? customization.background : null
+            background: customization ? customization.background : null,
+            avatar: customization ? customization.profile_avatar : null
+
         });
     } catch (error) {
         console.error('Error fetching user data:', error);

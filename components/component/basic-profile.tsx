@@ -1,6 +1,8 @@
+"use client"
 import React from 'react';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Boxes } from './background-boxes';
 
 // Animierte Border Keyframes
 const borderAnimation = `
@@ -62,8 +64,11 @@ export function BasicProfile({
     profile_views,
     error,
     userData,
-    background // neuer Prop für den Hintergrund
+    background,
+    avatar
 }: any) {
+
+    const avatarurl = avatar ? `/uploads/avatar/${avatar}` : "/placeholder-user.jpg";
     if (error) {
         return (
             <Card className="w-full max-w-md mx-auto bg-primary text-primary-foreground rounded-2xl overflow-hidden">
@@ -85,18 +90,19 @@ export function BasicProfile({
     }
 
     return (
-        <div className="relative w-full max-w-md mx-auto">
+        <div className="relative w-full max-w-md mx-auto" >
             {background && (
                 <div
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(/uploads/${background})` }}
+                    style={{ backgroundImage: `url(/uploads/background/${background})` }}
                 />
             )}
-            <style>
-                {borderAnimation}
-            </style>
+            <style jsx>{`
+                ${borderAnimation}
+             
+            `}</style>
             <Card
-                className="relative z-10 bg-primary text-primary-foreground overflow-hidden rounded-2xl"
+                className="relative z-10 bg-primary text-primary-foreground overflow-hidden rounded-2xl "
                 style={{
                     border: '2px solid rgba(255, 255, 255, 0)',
                     animation: 'borderAnimation 3s infinite' // Animation anwenden
@@ -105,8 +111,8 @@ export function BasicProfile({
                 <CardHeader className="bg-primary-foreground/10 py-6">
                     <div className="flex flex-col items-center justify-center">
                         <Avatar className="w-16 h-16 mb-4 rounded-full">
-                            <AvatarImage src="/placeholder-user.jpg" />
-                            <AvatarFallback>{username[0]}</AvatarFallback>
+                            <AvatarImage src={avatarurl} />
+                            <AvatarFallback className='text-gray-800 font-bold bg-gray-500'>{username[0]}</AvatarFallback>
                         </Avatar>
                         <div className="text-2xl font-bold">{username}</div>
                     </div>
