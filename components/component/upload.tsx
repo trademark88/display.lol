@@ -13,7 +13,14 @@ export function Upload() {
   useEffect(() => {
     const fetchPreviews = async () => {
       try {
-        const backgroundResponse = await fetch('/api/getuser/upload/background');
+        const responses = await Promise.all([
+          fetch('/api/getuser/upload/background'),
+          fetch('/api/getuser/upload/avatar'),
+          fetch('/api/getuser/upload/audio')
+        ]);
+
+        const [backgroundResponse, avatarResponse, audioResponse] = responses;
+
         if (backgroundResponse.ok) {
           const backgroundResponseData = await backgroundResponse.json();
           if (backgroundResponseData.background) {
@@ -22,7 +29,6 @@ export function Upload() {
           }
         }
 
-        const avatarResponse = await fetch('/api/getuser/upload/avatar');
         if (avatarResponse.ok) {
           const avatarResponseData = await avatarResponse.json();
           if (avatarResponseData.avatar) {
@@ -31,7 +37,6 @@ export function Upload() {
           }
         }
 
-        const audioResponse = await fetch('/api/getuser/upload/audio');
         if (audioResponse.ok) {
           const audioData = await audioResponse.json();
           if (audioData.audio) {
@@ -136,12 +141,48 @@ export function Upload() {
     }
   };
 
+  const handleDelete = async (label: string) => {
+    let endpoint = '';
+    switch (label) {
+      case 'Background':
+        endpoint = '/api/customize/delete/background';
+        break;
+      case 'Profile Avatar':
+        endpoint = '/api/customize/delete/avatar';
+        break;
+      case 'Audio':
+        endpoint = '/api/customize/delete/audio';
+        break;
+      default:
+        throw new Error('Unsupported file type');
+    }
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setPreviews(prev => ({ ...prev, [label]: null }));
+        setFileNames(prev => ({ ...prev, [label]: '' }));
+        setMessage('File deleted successfully');
+        setUploadStatus(prev => ({ ...prev, [label]: false }));
+      } else {
+        const errorData = await response.json();
+        setMessage(`Failed to delete file: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      setMessage('Failed to delete file');
+    }
+  };
+
   return (
-    <div className="p-6 bg-gray-500 rounded-2xl text-white">
-      <h2 className="mb-4 text-xl font-bold">Assets Uploader</h2>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {['Background', 'Profile Avatar'].map((label) => (
-          <div key={label} className="p-4 rounded-lg">
+    <div className="p-6 bg-gray-800 rounded-2xl text-white">
+      <h2 className="mb-4 text-2xl font-bold">Assets Uploader</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {['Background', 'Profile Avatar', 'Audio'].map((label) => (
+          <div key={label} className="p-4 bg-gray-700 rounded-lg shadow-md relative">
             <h3 className="mb-2 text-lg font-semibold">{label}</h3>
             <div
               className={`relative flex flex-col items-center justify-center h-40 border-2 border-dashed rounded-md ${
@@ -191,6 +232,15 @@ export function Upload() {
                 <div className="absolute bottom-0 right-0 p-2">
                   <CheckIcon className="w-6 h-6 text-green-500" />
                 </div>
+              )}
+              {previews[label] && (
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 p-2 bg-red-500 rounded-full hover:bg-red-600"
+                  onClick={() => handleDelete(label)}
+                >
+                  <XIcon className="w-5 h-5 text-white" />
+                </button>
               )}
             </div>
           </div>
@@ -260,6 +310,26 @@ function CheckIcon(props: IconProps) {
       strokeLinejoin="round"
     >
       <path d="M20 6L9 17 4 12" />
+    </svg>
+  );
+}
+
+function XIcon(props: IconProps) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }
