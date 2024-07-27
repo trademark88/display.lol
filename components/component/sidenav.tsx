@@ -81,7 +81,7 @@ const Sidenav: React.FC<SidenavProps> = ({ token }) => {
               <span>Customize</span>
             </Link>
             <Link
-              href="#"
+              href="/account/links"
               className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               prefetch={false}
             >

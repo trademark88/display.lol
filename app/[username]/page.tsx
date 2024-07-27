@@ -5,7 +5,10 @@ import styled from 'styled-components';
 import { BasicProfile } from '@/components/component/basic-profile';
 import axios from 'axios';
 import Snowfall from 'react-snowfall';
+import { MatrixRainingLetters } from "react-mdr";
 import { BackgroundBeams } from '@/components/component/background-beams.tsx';
+import { username_effects } from '@prisma/client';
+import NotFound from '@/components/component/notfound';
 
 interface Props {
     params: {
@@ -20,34 +23,60 @@ const Page: React.FC<Props> = (props: Props) => {
     const [error, setError] = useState<boolean>(false);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchData = async () => {
             try {
-                const usernameResponse = await axios.get(`http://localhost:3000/api/get-user-display?username=${username}`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                await axios.post(
-                    `http://localhost:3000/api/increase-views?username=${encodeURIComponent(username)}`,
-                    {},
+                const usernameResponse = await axios.get(
+                    `http://localhost:3000/api/get-user-display?username=${username}`,
                     {
+                        signal: controller.signal,
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     }
                 );
 
-                const { username_body, profile_views, background, avatar } = usernameResponse.data;
-                setUserData({ username_body, profile_views, background, avatar });
+                const { username_body, profile_views, background, avatar, background_effects, username_effects,  description} = usernameResponse.data;
+                setUserData({ username_body, profile_views, background, avatar, background_effects, username_effects, description });
                 setLoading(false);
             } catch (error) {
-                setError(true);
-                setLoading(false);
+                if (axios.isCancel(error)) {
+                    console.log('Request cancelled:', error);
+                } else {
+                    setError(true);
+                    setLoading(false);
+                }
+            }
+        };
+
+        const increaseViews = async () => {
+            try {
+                await axios.post(
+                    `http://localhost:3000/api/increase-views?username=${encodeURIComponent(username)}`,
+                    {},
+                    {
+                        signal: controller.signal,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+            } catch (error) {
+                if (axios.isCancel(error)) {
+                    console.log('Request cancelled:', error);
+                } else {
+                    console.error('Error increasing views:', error);
+                }
             }
         };
 
         fetchData();
+        increaseViews();
+
+        return () => {
+            controller.abort(); // Cleanup on component unmount
+        };
     }, [username]);
 
     if (loading) {
@@ -60,9 +89,34 @@ const Page: React.FC<Props> = (props: Props) => {
     }
 
     if (error) {
-        return <div>Error loading page.</div>;
+        return <NotFound/>;
     }
 
+    const renderBackgroundEffect = () => {
+        switch (userData.background_effects) {
+            case 'matrix':
+                return (
+                    <MatrixWrapper key="matrix-effect">
+                        <MatrixRainingLetters custom_class="m-0 p-0" />
+                    </MatrixWrapper>
+                );
+            case 'snowfall':
+                return (
+                    <Snowfall 
+                        style={{
+                            position: 'fixed',
+                            width: '100vw',
+                            height: '100vh',
+                            zIndex: 0
+                        }}
+                    />
+                );
+            case 'backgroundbeams':
+                return <BackgroundBeams />;
+            default:
+                return null;
+        }
+    };
     return (
         <div className='bg-black'
             style={{
@@ -75,7 +129,7 @@ const Page: React.FC<Props> = (props: Props) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                cursor: userData.avatar ? `url("/uploads/avatar/${userData.avatar}"), auto` : undefined
+                position: 'relative'
             }}
         >
             <BasicProfile
@@ -84,14 +138,10 @@ const Page: React.FC<Props> = (props: Props) => {
                 error={false}
                 userData={true}
                 avatar={userData.avatar}
+                username_effects={userData.username_effects}
+                description={userData.description}
             />
-            <Snowfall 
-                style={{
-                    position: 'fixed',
-                    width: '100vw',
-                    height: '100vh',
-                }}
-            />
+            {renderBackgroundEffect()}
         </div>
     );
 };
@@ -121,6 +171,15 @@ const Spinner = styled.div`
       transform: rotate(360deg);
     }
   }
+`;
+
+const MatrixWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Ensure it stays in the background but visible */
 `;
 
 export default Page;

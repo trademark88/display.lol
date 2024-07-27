@@ -62,22 +62,18 @@ model Other_Customization{
 
 enum background_effects{
   none
-  snowflakes
-  rain
-  blurred_background
-  night_time
-  old_tv
+  backgroundbeams
+  snowfall 
+  matrix
 }
 
 enum username_effects{
- rainbow_name
-  black_sparkles
-  blue_sparkles
-  green_sparkles
-  pink_sparkles
-  red_sparkles
-  white_sparkles
-  yellow_sparkles
+ none
+ glowing
+ typing
+ shaking
+ color_changing
+ font_changing
 }
 
 // links
@@ -85,37 +81,37 @@ enum username_effects{
 model Profiles{
     profiles_id String @id @default(uuid())
     user User @relation(fields: [profiles_id], references: [id])
-    snapchat String 
-    youtube String
-    discord String
-    spotify String
-    instagram String
-    x String
-    tiktok String
-    telegram String
-    soundcloud String
-    paypal String
-    github String
-    roblox String
-    cash_app String
-    gitlab String
-    twitch String
-    reddit String
-    namemc String
-    onlyfans String
-    linkedin String
-    steam String
-    kick String
-    pinterest String
-    lastfm String
-    buymeacoffee String
-    kofi String
-    facebook String
-    bitcoin String
-    ethereum String
-    litecoin String
-    monero String
-    email String
+    snapchat String?
+    youtube String?
+    discord String?
+    spotify String?
+    instagram String?
+    x String?
+    tiktok String?
+    telegram String?
+    soundcloud String?
+    paypal String?
+    github String?
+    roblox String?
+    cash_app String?
+    gitlab String?
+    twitch String?
+    reddit String?
+    namemc String?
+    onlyfans String?
+    linkedin String?
+    steam String?
+    kick String?
+    pinterest String?
+    lastfm String?
+    buymeacoffee String?
+    kofi String?
+    facebook String?
+    bitcoin String?
+    ethereum String?
+    litecoin String?
+    monero String?
+    email String?
     custom_social Custom_Url[]
 }
 

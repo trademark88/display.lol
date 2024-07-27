@@ -1,8 +1,8 @@
 -- CreateEnum
-CREATE TYPE "background_effects" AS ENUM ('none', 'snowflakes', 'rain', 'blurred_background', 'night_time', 'old_tv');
+CREATE TYPE "background_effects" AS ENUM ('none', 'backgroundbeams', 'snowfall', 'matrix');
 
 -- CreateEnum
-CREATE TYPE "username_effects" AS ENUM ('rainbow_name', 'black_sparkles', 'blue_sparkles', 'green_sparkles', 'pink_sparkles', 'red_sparkles', 'white_sparkles', 'yellow_sparkles');
+CREATE TYPE "username_effects" AS ENUM ('none', 'glowing', 'typing', 'shaking', 'color_changing', 'font_changing');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -63,37 +63,37 @@ CREATE TABLE "Other_Customization" (
 -- CreateTable
 CREATE TABLE "Profiles" (
     "profiles_id" TEXT NOT NULL,
-    "snapchat" TEXT NOT NULL,
-    "youtube" TEXT NOT NULL,
-    "discord" TEXT NOT NULL,
-    "spotify" TEXT NOT NULL,
-    "instagram" TEXT NOT NULL,
-    "x" TEXT NOT NULL,
-    "tiktok" TEXT NOT NULL,
-    "telegram" TEXT NOT NULL,
-    "soundcloud" TEXT NOT NULL,
-    "paypal" TEXT NOT NULL,
-    "github" TEXT NOT NULL,
-    "roblox" TEXT NOT NULL,
-    "cash_app" TEXT NOT NULL,
-    "gitlab" TEXT NOT NULL,
-    "twitch" TEXT NOT NULL,
-    "reddit" TEXT NOT NULL,
-    "namemc" TEXT NOT NULL,
-    "onlyfans" TEXT NOT NULL,
-    "linkedin" TEXT NOT NULL,
-    "steam" TEXT NOT NULL,
-    "kick" TEXT NOT NULL,
-    "pinterest" TEXT NOT NULL,
-    "lastfm" TEXT NOT NULL,
-    "buymeacoffee" TEXT NOT NULL,
-    "kofi" TEXT NOT NULL,
-    "facebook" TEXT NOT NULL,
-    "bitcoin" TEXT NOT NULL,
-    "ethereum" TEXT NOT NULL,
-    "litecoin" TEXT NOT NULL,
-    "monero" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "snapchat" TEXT,
+    "youtube" TEXT,
+    "discord" TEXT,
+    "spotify" TEXT,
+    "instagram" TEXT,
+    "x" TEXT,
+    "tiktok" TEXT,
+    "telegram" TEXT,
+    "soundcloud" TEXT,
+    "paypal" TEXT,
+    "github" TEXT,
+    "roblox" TEXT,
+    "cash_app" TEXT,
+    "gitlab" TEXT,
+    "twitch" TEXT,
+    "reddit" TEXT,
+    "namemc" TEXT,
+    "onlyfans" TEXT,
+    "linkedin" TEXT,
+    "steam" TEXT,
+    "kick" TEXT,
+    "pinterest" TEXT,
+    "lastfm" TEXT,
+    "buymeacoffee" TEXT,
+    "kofi" TEXT,
+    "facebook" TEXT,
+    "bitcoin" TEXT,
+    "ethereum" TEXT,
+    "litecoin" TEXT,
+    "monero" TEXT,
+    "email" TEXT,
 
     CONSTRAINT "Profiles_pkey" PRIMARY KEY ("profiles_id")
 );

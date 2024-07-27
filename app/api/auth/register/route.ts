@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         customization: {
           create: {
             background_effects: "none",
-            username_effects: "rainbow_name",
+            username_effects: "none",
             profile_opacity: 100,
             profile_blur: 0,
             swap_box_colors: false,
@@ -41,6 +41,9 @@ export async function POST(req: Request) {
             username_glow: true,
             badge_glow: true
           }
+        },
+        profiles:{
+          create: {}
         }
       },
 
