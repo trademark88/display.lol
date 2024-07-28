@@ -37,12 +37,8 @@ export async function POST(req: Request) {
         const fileExtension = file.name.split('.').pop(); // Dateiendung extrahieren
         const uuidFileName = `${uuidv4()}.${fileExtension}`;
 
-        // Verzeichnis erstellen, falls nicht vorhanden
-        const uploadDir = './public/uploads/audio';
-        await fs.mkdir(uploadDir, { recursive: true });
-
         // Datei speichern
-        await fs.writeFile(`${uploadDir}/${uuidFileName}`, buffer);
+        await fs.writeFile(`./public/uploads/audio/${uuidFileName}`, buffer);
 
         // 3. Finde den Customize-Eintrag des Benutzers
         const customize = await prisma.customize.findFirst({
@@ -63,7 +59,7 @@ export async function POST(req: Request) {
                 customize_id: customize.customize_id
             },
             data: {
-                profile_avatar: uuidFileName
+                audio: uuidFileName
             }
         });
 

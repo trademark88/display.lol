@@ -22,9 +22,8 @@ export async function GET(req: Request) {
         }
 
         const customization = user.customization.length > 0 ? user.customization[0] : null;
-        const profiles  = user.profiles.length > 0 ? user.profiles : null;
+        const profiles  = user.profiles.length > 0 ? user.profiles[0] : null;
 
-        console.log(customization?.username_effects)
 
         return NextResponse.json({
             username_body: user.username,

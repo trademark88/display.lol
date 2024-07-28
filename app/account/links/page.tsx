@@ -31,6 +31,7 @@ import {
   FaTwitch,
   FaTwitter,
   FaYoutube,
+  FaTimes, // Importiere das X-Icon
 } from "react-icons/fa";
 import { FaDiscord } from "react-icons/fa";
 import { FaLitecoinSign, FaSquareLastfm } from "react-icons/fa6";
@@ -53,7 +54,7 @@ const icons: IconData[] = [
   { icon: <FaDiscord className="text-indigo-600 text-4xl" />, key: "discord", name: "Discord", urlPrefix: "discord.com/" },
   { icon: <FaSpotify className="text-green-500 text-4xl" />, key: "spotify", name: "Spotify", urlPrefix: "spotify.com/" },
   { icon: <FaInstagram className="text-pink-500 text-4xl" />, key: "instagram", name: "Instagram", urlPrefix: "instagram.com/" },
-  { icon: <FaTwitter className="text-blue-400 text-4xl" />, key: "x", name: "Twitter", urlPrefix: "twitter.com/" },
+  { icon: <FaTwitter className="text-blue-400 text-4xl" />, key: "x", name: "X", urlPrefix: "twitter.com/" },
   { icon: <FaTiktok className="text-black text-4xl" />, key: "tiktok", name: "TikTok", urlPrefix: "tiktok.com/" },
   { icon: <FaTelegram className="text-blue-500 text-4xl" />, key: "telegram", name: "Telegram", urlPrefix: "telegram.org/" },
   { icon: <FaSoundcloud className="text-orange-500 text-4xl" />, key: "soundcloud", name: "SoundCloud", urlPrefix: "soundcloud.com/" },
@@ -78,7 +79,7 @@ const icons: IconData[] = [
   { icon: <FaEthereum className="text-gray-700 text-4xl" />, key: "ethereum", name: "Ethereum", urlPrefix: "ethereum.org/" },
   { icon: <FaLitecoinSign className="text-blue-600 text-4xl" />, key: "litecoin", name: "Litecoin", urlPrefix: "litecoin.org/" },
   { icon: <FaMonero className="text-orange-500 text-4xl" />, key: "monero", name: "Monero", urlPrefix: "getmonero.org/" },
-  { icon: <IoMail className="text-gray-800 text-4xl" />, key: "email", name: "Mail", urlPrefix: "mailto:" },
+  { icon: <IoMail className="text-gray-800 text-4xl" />, key: "email", name: "Email", urlPrefix: "mailto:" },
   { icon: <CgWebsite className="text-gray-800 text-4xl" />, key: "website", name: "Website", urlPrefix: "https://" },
 ];
 
@@ -114,23 +115,20 @@ const Page: React.FC = () => {
         }, {} as { [key: string]: string });
         
         setCustomLinks(initialCustomLinks);
-
       } catch (error) {
         console.error("Fehler beim Abrufen der Daten:", error);
       }
     };
 
     fetchData();
-  }, []); // Leeres Abhängigkeits-Array, um den Effekt einmal beim Mounten auszuführen
+  }, []); // leeres Array bedeutet, dass dieser Effekt nur einmal beim Mounten ausgeführt wird
 
-  // Funktion zum Handhaben von Icon-Klicks
   const handleIconClick = (key: string) => {
     setOpenModal(key);
     setError(null);
     setSuccessMessage(null);
   };
 
-  // Funktion zum Handhaben von Eingabeänderungen
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputs({
       ...inputs,
@@ -138,7 +136,6 @@ const Page: React.FC = () => {
     });
   };
 
-  // Funktion zur Handhabung der Formularübermittlung
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -150,7 +147,6 @@ const Page: React.FC = () => {
     console.log("Payload an den Server gesendet:", payload);
 
     try {
-      // Sende den POST-Request
       const response = await fetch("/api/customize/updatelinks", {
         method: "POST",
         headers: {
@@ -166,7 +162,6 @@ const Page: React.FC = () => {
 
       const data = await response.json();
 
-      // Aktualisiere benutzerdefinierte Links
       setCustomLinks((prev) => ({
         ...prev,
         [openModal!]: `${getUrlPrefix(openModal!)}${inputs[openModal!]}`,
@@ -179,7 +174,32 @@ const Page: React.FC = () => {
     }
   };
 
-  // Hilfsfunktion, um das URL-Präfix zu erhalten
+  const handleRemoveLink = async (key: string) => {
+    setCustomLinks((prev) => {
+      const updatedLinks = { ...prev };
+      delete updatedLinks[key];
+      return updatedLinks;
+    });
+
+    try {
+      const response = await fetch("/api/customize/removelink", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ brand: key }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Fehler beim Entfernen des Links. Bitte versuchen Sie es erneut.");
+      }
+
+      setSuccessMessage(`Ihr ${key} Link wurde erfolgreich entfernt!`);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
   const getUrlPrefix = (key: string): string => {
     const selectedIcon = icons.find((icon) => icon.key === key);
     return selectedIcon ? selectedIcon.urlPrefix : "";
@@ -188,11 +208,11 @@ const Page: React.FC = () => {
   return (
     <div className="bg-primary w-11/12 mx-auto rounded-2xl flex flex-col items-center justify-center text-center p-6">
       <h1 className="font-bold text-white text-xl mb-6">
-        Verlinken Sie Ihre Social-Media-Profile. <CiLink />
+        Verlinken Sie Ihre Social-Media-Profile. 
       </h1>
       <div className="flex flex-wrap justify-center">
         {icons.map(({ icon, key, name }) => (
-          <div key={key} className="flex flex-col items-center mx-4 my-2">
+          <div key={key} className="flex flex-col items-center mx-4 my-2 relative">
             <div
               className="cursor-pointer p-4 bg-white rounded-full hover:bg-gray-100 transition-all"
               onClick={() => handleIconClick(key)}
@@ -200,16 +220,21 @@ const Page: React.FC = () => {
               {icon}
             </div>
             <p className="text-white mt-2 font-bold">{name}</p>
-            {/* Zeige benutzerdefinierten Link unter dem Icon an, falls vorhanden */}
             {customLinks[key] && (
-              <a
-                href={`https://${customLinks[key]}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 underline mt-2 hover:text-blue-500 transition-all"
-              >
-                {customLinks[key]}
-              </a>
+              <div className="">
+                <a
+                  href={`https://${customLinks[key]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 underline mt-2 hover:text-blue-500 transition-all"
+                >
+                  {customLinks[key]}
+                </a>
+                <FaTimes
+                  onClick={() => handleRemoveLink(key)}
+                  className="absolute top-0 right-0 mt-1 mr-1 text-red-600 cursor-pointer text-xl"
+                />
+              </div>
             )}
           </div>
         ))}

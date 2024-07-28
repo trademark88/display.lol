@@ -10,6 +10,16 @@ export function Upload() {
   const [uploadStatus, setUploadStatus] = useState<{ [key: string]: boolean }>({});
   const [fileNames, setFileNames] = useState<{ [key: string]: string }>({});
 
+  // Define allowed file types and size limits
+  const ALLOWED_FILE_TYPES: { [key: string]: string[] } = {
+    'Background': ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    'Profile Avatar': ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    'Audio': ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/aac'],
+    'Video': ['video/mp4', 'video/webm', 'video/ogg']
+  };
+  const MAX_FILE_SIZE_MB = 5; // 5 MB
+  const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024; // in bytes
+
   useEffect(() => {
     const fetchPreviews = async () => {
       try {
@@ -71,7 +81,25 @@ export function Upload() {
     setDragOver(false);
   };
 
+  const validateFile = (file: File, label: string): string | null => {
+    const allowedTypes = ALLOWED_FILE_TYPES[label];
+    if (!allowedTypes.includes(file.type)) {
+      return `Invalid file type. Allowed types: ${allowedTypes.join(', ')}`;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return `File size exceeds ${MAX_FILE_SIZE_MB} MB`;
+    }
+    return null;
+  };
+
   const handleFile = (file: File, label: string) => {
+    const validationError = validateFile(file, label);
+    if (validationError) {
+      setMessage(validationError);
+      return;
+    }
+
+    console.log(`Handling file: ${file.name} for label: ${label}`);
     const formData = new FormData();
     let endpoint = '';
 
@@ -88,6 +116,7 @@ export function Upload() {
         endpoint = '/api/customize/upload/audio';
         formData.append('audio', file);
         break;
+
       default:
         throw new Error('Unsupported file type');
     }
@@ -96,9 +125,10 @@ export function Upload() {
 
     const reader = new FileReader();
     reader.onloadend = () => {
+      console.log(`File loaded for label: ${label}`);
       if (label === 'Audio') {
-        const audioUrl = URL.createObjectURL(file);
-        setPreviews(prev => ({ ...prev, [label]: audioUrl }));
+        const mediaUrl = URL.createObjectURL(file);
+        setPreviews(prev => ({ ...prev, [label]: mediaUrl }));
       } else {
         setPreviews(prev => ({ ...prev, [label]: reader.result as string }));
       }
@@ -112,6 +142,7 @@ export function Upload() {
       if (event.lengthComputable) {
         const percentCompleted = Math.round((event.loaded / event.total) * 100);
         setProgress(prev => ({ ...prev, [label]: percentCompleted }));
+        console.log(`Upload progress for ${label}: ${percentCompleted}%`);
       }
     };
 
@@ -152,6 +183,9 @@ export function Upload() {
         break;
       case 'Audio':
         endpoint = '/api/customize/delete/audio';
+        break;
+      case 'Video':
+        endpoint = '/api/customize/delete/video';
         break;
       default:
         throw new Error('Unsupported file type');
@@ -194,13 +228,7 @@ export function Upload() {
             >
               {previews[label] ? (
                 label === 'Audio' ? (
-                  <div className="flex flex-col items-center justify-center w-full h-full text-center">
-                    <audio controls className="w-full h-full">
-                      <source src={previews[label]} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                    <span className="mt-2 text-sm text-gray-400">{fileNames[label]}</span>
-                  </div>
+                  <h1 className="text-lg font-semibold">{fileNames[label]}</h1>
                 ) : (
                   <img
                     src={previews[label] || '/default-image.png'}
@@ -209,9 +237,11 @@ export function Upload() {
                   />
                 )
               ) : (
-                <ImageIcon className="w-12 h-12 text-gray-400" />
+                <div className="flex flex-col items-center justify-center w-full h-full text-center">
+                  <ImageIcon className="w-12 h-12 text-gray-400" />
+                  <p className="mt-2 text-sm text-gray-400">Click or Drag and drop a file</p>
+                </div>
               )}
-              <p className="mt-2 text-sm text-gray-400">Click or Drag and drop a file</p>
               <input
                 type="file"
                 className="absolute inset-0 opacity-0"
@@ -276,7 +306,7 @@ function ImageIcon(props: IconProps) {
   );
 }
 
-function AudioIcon(props: IconProps) {
+function VideoIcon(props: IconProps) {
   return (
     <svg
       {...props}
@@ -290,7 +320,7 @@ function AudioIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <polygon points="3 22 21 12 3 2 3 22" />
+      <polygon points="5 3 19 12 5 21 5 3" />
     </svg>
   );
 }

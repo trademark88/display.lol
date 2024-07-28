@@ -72,11 +72,11 @@ export async function POST(req: Request) {
 
     // Validate if the brand is one of the allowed fields in the Profiles model
     const allowedFields = [
-      "snapchat", "youtube", "discord", "spotify", "instagram", "twitter",
+      "snapchat", "youtube", "discord", "spotify", "instagram", "x",
       "tiktok", "telegram", "soundcloud", "paypal", "github", "roblox",
-      "cashapp", "gitlab", "twitch", "reddit", "namemc", "onlyfans", "linkedin",
+      "cash_app", "gitlab", "twitch", "reddit", "namemc", "onlyfans", "linkedin",
       "steam", "kick", "pinterest", "lastfm", "buymeacoffee", "kofi",
-      "facebook", "bitcoin", "ethereum", "litecoin", "monero", "mail", "website"
+      "facebook", "bitcoin", "ethereum", "litecoin", "monero", "email", "website"
     ];
 
     if (!allowedFields.includes(brand.toLowerCase())) {

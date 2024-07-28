@@ -1,27 +1,49 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-function EyeIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
+// Import der Icons
+import {
+  SiSnapchat,
+  SiRoblox,
+  SiCashapp,
+  SiNamemc,
+  SiOnlyfans,
+  SiKick,
+  SiBuymeacoffee,
+  SiKofi,
+} from "react-icons/si";
 
+import {
+  FaBitcoin,
+  FaEthereum,
+  FaEye,
+  FaFacebook,
+  FaGithub,
+  FaGitlab,
+  FaInstagram,
+  FaLinkedin,
+  FaMonero,
+  FaPaypal,
+  FaPinterest,
+  FaReddit,
+  FaSoundcloud,
+  FaSpotify,
+  FaSteam,
+  FaTelegram,
+  FaTiktok,
+  FaTwitch,
+  FaTwitter,
+  FaYoutube,
+} from "react-icons/fa";
+
+import { FaDiscord } from "react-icons/fa";
+import { FaLitecoinSign, FaSquareLastfm } from "react-icons/fa6";
+import { IoMail } from "react-icons/io5";
+import { CgWebsite } from "react-icons/cg";
+import { CiLink } from "react-icons/ci";
+
+// Definiere die Keyframes für Animationen
 const getKeyframes = () => `
   @keyframes glow-animation {
     from { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff; }
@@ -54,51 +76,52 @@ const getKeyframes = () => `
   }
 `;
 
+// Definiere die Styles für die Komponente
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#222',
-    color: '#fff',
-    fontFamily: 'Arial, sans-serif',
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    height: "100vh",
+    backgroundColor: "#222",
+    color: "#fff",
+    fontFamily: "Arial, sans-serif",
   },
   effect: {
-    margin: '0 20px',
-    textAlign: 'center' as 'center',
+    margin: "0 20px",
+    textAlign: "center" as "center",
   },
   glow: {
-    fontSize: '2.5em',
-    color: '#fff',
-    textShadow: '0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff',
-    animation: 'glow-animation 1.5s infinite alternate',
+    fontSize: "2.5em",
+    color: "#fff",
+    textShadow: "0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff",
+    animation: "glow-animation 1.5s infinite alternate",
   },
   typing: {
-    fontSize: '2.5em',
-    display: 'inline-block',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    borderRight: '0.15em solid #ff00ff',
-    animation: 'typing 4s steps(30, end), blink-caret 0.75s step-end infinite',
-    width: 'fit-content', // Adjust width to fit the content
+    fontSize: "2.5em",
+    display: "inline-block",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    borderRight: "0.15em solid #ff00ff",
+    animation: "typing 4s steps(30, end), blink-caret 0.75s step-end infinite",
+    width: "fit-content", // Anpassung der Breite
   },
   shake: {
-    fontSize: '2.5em',
-    display: 'inline-block',
-    animation: 'shake 0.5s ease-in-out infinite',
+    fontSize: "2.5em",
+    display: "inline-block",
+    animation: "shake 0.5s ease-in-out infinite",
   },
   colorChange: {
-    fontSize: '2.5em',
-    animation: 'color-change 3s infinite',
+    fontSize: "2.5em",
+    animation: "color-change 3s infinite",
   },
   fontChange: {
-    fontSize: '2.5em',
-    animation: 'font-change 6s infinite',
+    fontSize: "2.5em",
+    animation: "font-change 6s infinite",
   },
 };
 
-// Helper function to determine style based on username_effects
+// Hilfsfunktion, um das Styling basierend auf dem `username_effects` Wert zu bestimmen
 const getUsernameEffectStyle = (effect: string) => {
   const effectMapping: { [key: string]: React.CSSProperties } = {
     none: {},
@@ -112,6 +135,95 @@ const getUsernameEffectStyle = (effect: string) => {
   return effectMapping[effect] || {};
 };
 
+// Mapping der Social Media Icons zu deren JSX-Komponenten
+const socialMediaIcons: { [key: string]: JSX.Element } = {
+  snapchat: <SiSnapchat size={30} />,
+  youtube: <FaYoutube size={30} />,
+  discord: <FaDiscord size={30} />,
+  spotify: <FaSpotify size={30} />,
+  instagram: <FaInstagram size={30} />,
+  x: <FaTwitter size={30} />, // "x" für Twitter
+  tiktok: <FaTiktok size={30} />,
+  telegram: <FaTelegram size={30} />,
+  soundcloud: <FaSoundcloud size={30} />,
+  paypal: <FaPaypal size={30} />,
+  github: <FaGithub size={30} />,
+  roblox: <SiRoblox size={30} />,
+  cash_app: <SiCashapp size={30} />,
+  gitlab: <FaGitlab size={30} />,
+  twitch: <FaTwitch size={30} />,
+  reddit: <FaReddit size={30} />,
+  namemc: <SiNamemc size={30} />,
+  onlyfans: <SiOnlyfans size={30} />,
+  linkedin: <FaLinkedin size={30} />,
+  steam: <FaSteam size={30} />,
+  kick: <SiKick size={30} />,
+  pinterest: <FaPinterest size={30} />,
+  lastfm: <FaSquareLastfm size={30} />,
+  buymeacoffee: <SiBuymeacoffee size={30} />,
+  kofi: <SiKofi size={30} />,
+  facebook: <FaFacebook size={30} />,
+  bitcoin: <FaBitcoin size={30} />,
+  ethereum: <FaEthereum size={30} />,
+  litecoin: <FaLitecoinSign size={30} />,
+  monero: <FaMonero size={30} />,
+  email: <IoMail size={30} />,
+  custom_social: <CgWebsite size={30} />,
+};
+
+interface BasicProfileProps {
+  username: string;
+  profile_views: number;
+  error: boolean;
+  userData: boolean;
+  background?: string;
+  avatar?: string;
+  username_effects?: string;
+  description?: string;
+  socialProfiles?: { [key: string]: string | null }; // Updated Prop für Social Media Benutzernamen
+}
+
+// Funktion zur Erstellung der Social Media URL basierend auf dem Platform-Namen und dem Benutzernamen
+const getSocialMediaUrl = (platform: string, username: string): string => {
+  const baseUrls: { [key: string]: string } = {
+    snapchat: `https://www.snapchat.com/add/${username}`,
+    youtube: `https://www.youtube.com/${username}`,
+    discord: `https://discordapp.com/users/${username}`,
+    spotify: `https://open.spotify.com/user/${username}`,
+    instagram: `https://www.instagram.com/${username}`,
+    x: `https://twitter.com/${username}`,
+    tiktok: `https://www.tiktok.com/@${username}`,
+    telegram: `https://t.me/${username}`,
+    soundcloud: `https://soundcloud.com/${username}`,
+    paypal: `https://www.paypal.me/${username}`,
+    github: `https://github.com/${username}`,
+    roblox: `https://www.roblox.com/users/${username}`,
+    cash_app: `https://cash.app/${username}`,
+    gitlab: `https://gitlab.com/${username}`,
+    twitch: `https://www.twitch.tv/${username}`,
+    reddit: `https://www.reddit.com/user/${username}`,
+    namemc: `https://namemc.com/profile/${username}`,
+    onlyfans: `https://onlyfans.com/${username}`,
+    linkedin: `https://www.linkedin.com/in/${username}`,
+    steam: `https://steamcommunity.com/id/${username}`,
+    kick: `https://kick.com/${username}`,
+    pinterest: `https://pinterest.com/${username}`,
+    lastfm: `https://www.last.fm/user/${username}`,
+    buymeacoffee: `https://www.buymeacoffee.com/${username}`,
+    kofi: `https://ko-fi.com/${username}`,
+    facebook: `https://www.facebook.com/${username}`,
+    bitcoin: `bitcoin:${username}`,
+    ethereum: `ethereum:${username}`,
+    litecoin: `litecoin:${username}`,
+    monero: `monero:${username}`,
+    email: `mailto:${username}`,
+    custom_social: `${username}`, // Direkt als URL
+  };
+
+  return baseUrls[platform] || "#";
+};
+
+// Definiere die BasicProfile Komponente
 export function BasicProfile({
   username,
   profile_views,
@@ -119,9 +231,10 @@ export function BasicProfile({
   userData,
   background,
   avatar,
-  username_effects,
-  description
-}: any) {
+  username_effects = "none", // Standardwert, um undefined zu vermeiden
+  description = "",
+  socialProfiles,
+}: BasicProfileProps) {
   const [textWidth, setTextWidth] = useState(0);
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -151,8 +264,6 @@ export function BasicProfile({
     );
   }
 
-  const effectStyle = getUsernameEffectStyle(username_effects);
-
   return (
     <div className="relative w-full max-w-lg mx-auto">
       {background && (
@@ -163,10 +274,10 @@ export function BasicProfile({
       )}
       <Card
         className="relative z-10 bg-primary text-primary-foreground overflow-hidden rounded-2xl"
-        style={{ 
-          border: 'none', // Keine Border und Animation
-          backdropFilter: 'blur(10px)', // Hintergrund verschwommen machen
-          backgroundColor: 'rgba(0, 0, 0, 0.5)' // Transparente schwarze Hintergrundfarbe
+        style={{
+          border: "none", // Keine Border und Animation
+          backdropFilter: "blur(10px)", // Hintergrund verschwommen machen
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparente schwarze Hintergrundfarbe
         }}
       >
         <CardHeader className="bg-primary-foreground/10 py-6">
@@ -174,31 +285,68 @@ export function BasicProfile({
             {avatar && (
               <Avatar className="w-16 h-16 mb-4 rounded-full">
                 <AvatarImage src={`/uploads/avatar/${avatar}`} />
-                <AvatarFallback className='text-gray-800 font-bold bg-gray-500'>{username[0]}</AvatarFallback>
+                <AvatarFallback className="text-gray-800 font-bold bg-gray-500">
+                  {username[0]}
+                </AvatarFallback>
               </Avatar>
             )}
-            <div 
-              className="text-2xl font-bold" 
-              style={{ ...effectStyle, width: username_effects === 'typing' ? textWidth : 'auto' }}
+            <div
+              className="text-2xl font-bold"
+              style={{
+                ...getUsernameEffectStyle(username_effects),
+                width: username_effects === "typing" ? textWidth : "auto",
+              }}
               ref={textRef}
             >
               {username}
             </div>
             <div className="text-center mt-2 text-lg font-bold">
+            <hr className="border-white w-full mt-3"/>
+
               {description}
+            </div>
+
+            {/* Rendere Social Media Icons unter der Beschreibung */}
+            <div
+              className="flex justify-center gap-4 mt-4 flex-wrap max-w-full"
+              style={{
+                gap: "1rem",
+              }}
+            >
+                          <hr className="border-white w-full mt-3"/>
+
+              {socialProfiles &&
+                Object.entries(socialProfiles).map(([platform, username]) => {
+                  if (username && socialMediaIcons[platform]) {
+                    return (
+                      <a
+                        href={getSocialMediaUrl(platform, username)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        key={platform}
+                        className="text-white hover:text-gray-400 transition-colors duration-300"
+                      >
+                        {socialMediaIcons[platform]}
+                      </a>
+                    );
+                  }
+                  return null; // Wenn der Benutzername `null` ist, rendere nichts
+                })}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="px-6 py-4 flex items-center justify-between bg-primary-foreground/10" >
+        <CardContent className="px-6 py-4 flex items-center justify-between bg-primary-foreground/10">
           <div className="flex items-center gap-2">
-            <EyeIcon className="w-5 h-5 text-primary-foreground" />
-            <span className="text-sm text-primary-foreground">{profile_views.toString()}</span>
+            <FaEye className="w-5 h-5 text-primary-foreground"/>
+
+            <span className="text-sm text-primary-foreground">
+              {profile_views.toString()}
+            </span>
           </div>
         </CardContent>
       </Card>
-      <style>
-        {getKeyframes()}
-      </style>
+
+      <style>{getKeyframes()}</style>
     </div>
   );
 }
